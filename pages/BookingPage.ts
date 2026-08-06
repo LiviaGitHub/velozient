@@ -14,8 +14,6 @@ interface BookingData {
 export class BookingPage {
   readonly page: Page;
   readonly bookNowButton: Locator;
-  readonly checkInInput: Locator;
-  readonly checkOutInput: Locator;
   readonly checkAvailabilityButton: Locator;
   readonly availableRoomBookNowButton: Locator;
   readonly firstNameInput: Locator;
@@ -24,23 +22,21 @@ export class BookingPage {
   readonly phoneInput: Locator;
   readonly reserveNowButton: Locator;
   readonly validationMessages: Locator;
-  readonly bookingConfirmationMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
 
-    this.bookNowButton = page.locator('a[href="#booking"]');
+    this.bookNowButton = page
+      .locator('a[href="#booking"]')
+      .first();
 
-    this.checkInInput = page.locator('input[name="checkin"]');
-    this.checkOutInput = page.locator('input[name="checkout"]');
-
-    this.checkAvailabilityButton = page.getByRole("button", {
-      name: "Check Availability",
-    });
-
-    this.bookingConfirmationMessage = page.getByText(
-  /booking confirmed|booking successful/i,
-);
+    this.checkAvailabilityButton = page.getByRole(
+      "button",
+      {
+        name: "Check Availability",
+        exact: true,
+      },
+    );
 
     this.availableRoomBookNowButton = page
       .locator('a[href^="/reservation/"]')
@@ -75,6 +71,10 @@ export class BookingPage {
   async clickBookingSection(): Promise<void> {
     await expect(this.bookNowButton).toBeVisible();
     await this.bookNowButton.click();
+
+    await expect(
+      this.checkAvailabilityButton,
+    ).toBeVisible();
   }
 
   async clickCheckAvailability(): Promise<void> {
@@ -93,7 +93,17 @@ export class BookingPage {
     await this.availableRoomBookNowButton.click();
   }
 
-  async clickReserveNow(): Promise<void> {
+  async openReservationForm(): Promise<void> {
+    await expect(this.reserveNowButton).toBeVisible();
+    await this.reserveNowButton.click();
+
+    await expect(this.firstNameInput).toBeVisible();
+    await expect(this.lastNameInput).toBeVisible();
+    await expect(this.emailInput).toBeVisible();
+    await expect(this.phoneInput).toBeVisible();
+  }
+
+  async submitReservation(): Promise<void> {
     await expect(this.reserveNowButton).toBeVisible();
     await this.reserveNowButton.click();
   }
@@ -109,15 +119,18 @@ export class BookingPage {
     await this.phoneInput.fill(data.phone);
   }
 
-  async expectInvalidEmailValidation(): Promise<void> {
-  const emailValidationMessage = this.page.getByText(
-    /invalid email|email.*valid|must be a well-formed email address/i,
-  );
+  async expectInvalidEmailValidation(
+    invalidEmail: string,
+  ): Promise<void> {
+    const emailValidationMessage = this.page.getByText(
+      /invalid email|email.*valid|must be a well-formed email address/i,
+    );
 
-  await expect(emailValidationMessage).toBeVisible();
-
-  await expect(this.emailInput).toHaveValue("invalid-email");
-}
+    await expect(emailValidationMessage).toBeVisible();
+    await expect(this.emailInput).toHaveValue(
+      invalidEmail,
+    );
+  }
 
   async expectRequiredFieldValidation(): Promise<void> {
     await expect(this.validationMessages).toHaveCount(7);
@@ -157,5 +170,10 @@ export class BookingPage {
         hasText: /^must not be empty$/,
       }),
     ).toHaveCount(2);
+
+    await expect(this.firstNameInput).toBeEmpty();
+    await expect(this.lastNameInput).toBeEmpty();
+    await expect(this.emailInput).toBeEmpty();
+    await expect(this.phoneInput).toBeEmpty();
   }
 }

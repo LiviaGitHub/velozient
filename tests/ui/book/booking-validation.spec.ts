@@ -19,17 +19,18 @@ test.describe("Booking form validation", () => {
         /\/reservation\/\d+\?checkin=.*&checkout=.*/,
       );
 
-      await bookingPage.clickReserveNow();
-      await bookingPage.clickReserveNow();
+      await bookingPage.openReservationForm();
+      await bookingPage.submitReservation();
 
       await bookingPage.expectRequiredFieldValidation();
     },
   );
 
-  test("TC-002 - User cannot complete a booking with an invalid email address", async ({
-    page,
-  }) => {
-    const bookingPage = new BookingPage(page);
+  test(
+    "TC-002 - User cannot complete a booking with an invalid email address",
+    async ({ page }) => {
+      const bookingPage = new BookingPage(page);
+      const invalidEmail = "invalid-email";
 
       await bookingPage.clickBookingSection();
       await bookingPage.clickCheckAvailability();
@@ -39,21 +40,24 @@ test.describe("Booking form validation", () => {
         /\/reservation\/\d+\?checkin=.*&checkout=.*/,
       );
 
-            await bookingPage.clickReserveNow();
+      await bookingPage.openReservationForm();
 
-    await bookingPage.completeBookingForm({
-      firstName: "Livia",
-      lastName: "Bonifacio",
-      email: "invalid-email",
-      phone: "07123456789",
-    });
+      await bookingPage.completeBookingForm({
+        firstName: "Livia",
+        lastName: "Bonifacio",
+        email: invalidEmail,
+        phone: "07123456789",
+      });
 
-    await bookingPage.clickReserveNow();
+      await bookingPage.submitReservation();
 
-    await bookingPage.expectInvalidEmailValidation();
+      await bookingPage.expectInvalidEmailValidation(
+        invalidEmail,
+      );
 
-    await expect(
-      bookingPage.bookingConfirmationMessage,
-    ).not.toBeVisible();
-  });
+      await expect(page).toHaveURL(
+        /\/reservation\/\d+\?checkin=.*&checkout=.*/,
+      );
+    },
+  );
 });
