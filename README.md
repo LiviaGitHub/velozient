@@ -10,7 +10,8 @@ The project validates the public booking flow using Playwright and TypeScript. I
 .
 ├── pages/                  # Page Objects
 ├── tests/
-│   └── ui/                 # End-to-end tests
+│   └── api/    
+│   └── ui/       
 ├── TEST_CASES.md           # Manual test cases
 ├── BUG_REPORT.md           # Bugs found during exploratory testing
 ├── playwright.config.ts
