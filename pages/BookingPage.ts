@@ -2,193 +2,160 @@ import {
   expect,
   type Locator,
   type Page,
-} from '@playwright/test';
+} from "@playwright/test";
+
+interface BookingData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
 
 export class BookingPage {
   readonly page: Page;
+  readonly bookNowButton: Locator;
   readonly checkInInput: Locator;
   readonly checkOutInput: Locator;
   readonly checkAvailabilityButton: Locator;
-  readonly availableRoomCards: Locator;
+  readonly availableRoomBookNowButton: Locator;
+  readonly firstNameInput: Locator;
+  readonly lastNameInput: Locator;
+  readonly emailInput: Locator;
+  readonly phoneInput: Locator;
+  readonly reserveNowButton: Locator;
+  readonly validationMessages: Locator;
+  readonly bookingConfirmationMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
 
-    this.checkInInput = page.getByLabel('Check In');
-    this.checkOutInput = page.getByLabel('Check Out');
+    this.bookNowButton = page.locator('a[href="#booking"]');
 
-    this.checkAvailabilityButton = page.getByRole(
-      'button',
-      {
-        name: /check availability/i,
-      },
+    this.checkInInput = page.locator('input[name="checkin"]');
+    this.checkOutInput = page.locator('input[name="checkout"]');
+
+    this.checkAvailabilityButton = page.getByRole("button", {
+      name: "Check Availability",
+    });
+
+    this.bookingConfirmationMessage = page.getByText(
+  /booking confirmed|booking successful/i,
+);
+
+    this.availableRoomBookNowButton = page
+      .locator('a[href^="/reservation/"]')
+      .first();
+
+    this.firstNameInput = page.locator(
+      'input[name="firstname"]',
     );
 
-    this.availableRoomCards = page.locator('.room-card');
+    this.lastNameInput = page.locator(
+      'input[name="lastname"]',
+    );
+
+    this.emailInput = page.locator(
+      'input[name="email"]',
+    );
+
+    this.phoneInput = page.locator(
+      'input[name="phone"]',
+    );
+
+    this.reserveNowButton = page.getByRole("button", {
+      name: "Reserve Now",
+      exact: true,
+    });
+
+    this.validationMessages = page.locator(
+      ".alert.alert-danger li",
+    );
   }
 
-  async open(): Promise<void> {
-    await this.page.goto('/');
+  async clickBookingSection(): Promise<void> {
+    await expect(this.bookNowButton).toBeVisible();
+    await this.bookNowButton.click();
+  }
 
+  async clickCheckAvailability(): Promise<void> {
     await expect(
       this.checkAvailabilityButton,
     ).toBeVisible();
+
+    await this.checkAvailabilityButton.click();
   }
 
-  async searchAvailableRoom(): Promise<{
-    checkIn: Date;
-    checkOut: Date;
-  }> {
-    /*
-     * Tenta diferentes períodos futuros.
-     * Isso reduz o risco de escolher datas já reservadas.
-     */
-    for (let attempt = 0; attempt < 6; attempt++) {
-      const checkIn = this.createFutureDate(
-        60 + attempt * 10,
-      );
-
-      const checkOut = this.createFutureDate(
-        63 + attempt * 10,
-      );
-
-      await this.checkInInput.fill(
-        this.formatDateForInput(checkIn),
-      );
-
-      await this.checkOutInput.fill(
-        this.formatDateForInput(checkOut),
-      );
-
-      await this.checkAvailabilityButton.click();
-
-      const availableRoom = this.availableRoomCards
-        .getByRole('link', {
-          name: /book now/i,
-        })
-        .first();
-
-      const roomIsAvailable = await availableRoom
-        .isVisible({
-          timeout: 5_000,
-        })
-        .catch(() => false);
-
-      if (roomIsAvailable) {
-        await availableRoom.click();
-
-        return {
-          checkIn,
-          checkOut,
-        };
-      }
-    }
-
-    throw new Error(
-      'No available room was found for the future date ranges tested.',
-    );
-  }
-
-  async completeBooking(
-    firstName: string,
-    lastName: string,
-    email: string,
-    phone: string,
-  ): Promise<void> {
-    const openReservationButton = this.page.getByRole(
-      'button',
-      {
-        name: /reserve now/i,
-      },
-    );
-
-    await expect(openReservationButton).toBeVisible();
-
-    await openReservationButton.click();
-
-    const bookingForm = this.page.locator(
-      '.booking-card form',
-    );
-
-    await expect(bookingForm).toBeVisible();
-
-    await bookingForm
-      .getByPlaceholder(/first.*name/i)
-      .fill(firstName);
-
-    await bookingForm
-      .getByPlaceholder(/last.*name/i)
-      .fill(lastName);
-
-    await bookingForm
-      .getByPlaceholder(/email/i)
-      .fill(email);
-
-    await bookingForm.getByLabel(/phone/i).fill(phone);
-  }
-
-  getSubmitBookingButton(): Locator {
-    return this.page
-      .locator('.booking-card form')
-      .getByRole('button', {
-        name: /reserve now/i,
-      });
-  }
-
-  async expectBookingConfirmed(
-    checkIn: Date,
-    checkOut: Date,
-  ): Promise<void> {
+  async selectFirstAvailableRoom(): Promise<void> {
     await expect(
-      this.page.getByRole('heading', {
-        name: /booking confirmed/i,
+      this.availableRoomBookNowButton,
+    ).toBeVisible();
+
+    await this.availableRoomBookNowButton.click();
+  }
+
+  async clickReserveNow(): Promise<void> {
+    await expect(this.reserveNowButton).toBeVisible();
+    await this.reserveNowButton.click();
+  }
+
+  async completeBookingForm(
+    data: BookingData,
+  ): Promise<void> {
+    await expect(this.firstNameInput).toBeVisible();
+
+    await this.firstNameInput.fill(data.firstName);
+    await this.lastNameInput.fill(data.lastName);
+    await this.emailInput.fill(data.email);
+    await this.phoneInput.fill(data.phone);
+  }
+
+  async expectInvalidEmailValidation(): Promise<void> {
+  const emailValidationMessage = this.page.getByText(
+    /invalid email|email.*valid|must be a well-formed email address/i,
+  );
+
+  await expect(emailValidationMessage).toBeVisible();
+
+  await expect(this.emailInput).toHaveValue("invalid-email");
+}
+
+  async expectRequiredFieldValidation(): Promise<void> {
+    await expect(this.validationMessages).toHaveCount(7);
+
+    await expect(
+      this.validationMessages.filter({
+        hasText: /^Firstname should not be blank$/,
       }),
     ).toBeVisible();
 
-    const expectedDates = `${this.formatDateForConfirmation(
-      checkIn,
-    )} - ${this.formatDateForConfirmation(checkOut)}`;
-
     await expect(
-      this.page.getByText(expectedDates, {
-        exact: true,
+      this.validationMessages.filter({
+        hasText: /^Lastname should not be blank$/,
       }),
     ).toBeVisible();
-  }
 
-  private createFutureDate(daysFromToday: number): Date {
-    const date = new Date();
+    await expect(
+      this.validationMessages.filter({
+        hasText: /^size must be between 3 and 30$/,
+      }),
+    ).toBeVisible();
 
-    /*
-     * Setting the time to noon helps prevent unexpected
-     * date changes caused by time zone differences.
-     */
-    date.setHours(12, 0, 0, 0);
+    await expect(
+      this.validationMessages.filter({
+        hasText: /^size must be between 3 and 18$/,
+      }),
+    ).toBeVisible();
 
-    date.setDate(date.getDate() + daysFromToday);
+    await expect(
+      this.validationMessages.filter({
+        hasText: /^size must be between 11 and 21$/,
+      }),
+    ).toBeVisible();
 
-    return date;
-  }
-
-  private formatDateForInput(date: Date): string {
-    const month = String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    );
-
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${month}/${day}/${date.getFullYear()}`;
-  }
-
-  private formatDateForConfirmation(date: Date): string {
-    const month = String(date.getMonth() + 1).padStart(
-      2,
-      '0',
-    );
-
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${date.getFullYear()}-${month}-${day}`;
+    await expect(
+      this.validationMessages.filter({
+        hasText: /^must not be empty$/,
+      }),
+    ).toHaveCount(2);
   }
 }

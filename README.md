@@ -2,7 +2,7 @@
 
 This repository contains my solution for the Velozient QA Automation Challenge.
 
-The project validates the public booking flow of a Bed & Breakfast application using Playwright and TypeScript. It includes manual test cases, automated end-to-end tests, bug reports, and documentation.
+The project validates the public booking flow using Playwright and TypeScript. It includes manual test cases, automated tests, API testing, bug reports, and documentation.
 
 ## Project Structure
 
@@ -20,46 +20,13 @@ The project validates the public booking flow of a Bed & Breakfast application u
 └── README.md
 ```
 
-## Tech Stack
-
-- Playwright
-- TypeScript
-- Node.js
-- Page Object Model (POM)
-
-## Test Coverage
-
-The automated tests cover the application's critical booking flow, including:
-
-- Public booking page
-- Dynamic date selection
-- Room availability search
-- Room selection
-- Booking creation
-- Booking confirmation
-- API validation (Senior requirement)
-
-The check-in and check-out dates are generated dynamically during execution, ensuring the tests remain stable regardless of when they are run.
-
-## Project Design
-
-The framework follows Playwright best practices:
-
-- Page Object Model
-- Readable test steps
-- Dynamic locators
-- Test isolation
-- Clear assertions
-- Reusable helper methods
-- Maintainable structure
-
 ## Installation
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/velozient/liviabonifacio-qa-automation.git
-cd liviabonifacio-qa-automation
+git clone git@github.com:LiviaGitHub/velozient.git
+cd velozient
 ```
 
 Install dependencies:
