@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
 interface BookingDates {
   checkin: string;
@@ -15,10 +15,12 @@ interface BookingResponse {
 }
 
 function formatDate(date: Date): string {
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split('T')[0];
 }
 
-function generateFutureDates(attempt: number): BookingDates {
+function generateFutureDates(
+  attempt: number,
+): BookingDates {
   const checkIn = new Date();
 
   /*
@@ -36,8 +38,8 @@ function generateFutureDates(attempt: number): BookingDates {
   };
 }
 
-test.describe("Booking API", () => {
-  test("API-001 - User can create a booking successfully", async ({
+test.describe('Booking API', () => {
+  test('API-001 - User can create a booking successfully', async ({
     request,
   }) => {
     const maxAttempts = 10;
@@ -55,16 +57,20 @@ test.describe("Booking API", () => {
         }
       | undefined;
 
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    for (
+      let attempt = 1;
+      attempt <= maxAttempts;
+      attempt++
+    ) {
       const bookingDates = generateFutureDates(attempt);
 
       const bookingPayload = {
         roomid: 1,
-        firstname: "Livia",
-        lastname: "Bonifacio",
+        firstname: 'Livia',
+        lastname: 'Bonifacio',
         depositpaid: true,
         email: `livia.api.${Date.now()}@example.com`,
-        phone: "07123456789",
+        phone: '07123456789',
         bookingdates: bookingDates,
       };
 
@@ -72,11 +78,11 @@ test.describe("Booking API", () => {
         `API booking attempt ${attempt}: ${bookingDates.checkin} to ${bookingDates.checkout}`,
       );
 
-      const response = await request.post("/api/booking/", {
+      const response = await request.post('/api/booking/', {
         data: bookingPayload,
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
       });
 

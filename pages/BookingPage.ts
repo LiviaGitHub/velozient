@@ -2,7 +2,7 @@ import {
   expect,
   type Locator,
   type Page,
-} from "@playwright/test";
+} from '@playwright/test';
 
 interface BookingData {
   firstName: string;
@@ -31,9 +31,9 @@ export class BookingPage {
       .first();
 
     this.checkAvailabilityButton = page.getByRole(
-      "button",
+      'button',
       {
-        name: "Check Availability",
+        name: 'Check Availability',
         exact: true,
       },
     );
@@ -50,21 +50,17 @@ export class BookingPage {
       'input[name="lastname"]',
     );
 
-    this.emailInput = page.locator(
-      'input[name="email"]',
-    );
+    this.emailInput = page.locator('input[name="email"]');
 
-    this.phoneInput = page.locator(
-      'input[name="phone"]',
-    );
+    this.phoneInput = page.locator('input[name="phone"]');
 
-    this.reserveNowButton = page.getByRole("button", {
-      name: "Reserve Now",
+    this.reserveNowButton = page.getByRole('button', {
+      name: 'Reserve Now',
       exact: true,
     });
 
     this.validationMessages = page.locator(
-      ".alert.alert-danger li",
+      '.alert.alert-danger li',
     );
   }
 
@@ -127,9 +123,7 @@ export class BookingPage {
     );
 
     await expect(emailValidationMessage).toBeVisible();
-    await expect(this.emailInput).toHaveValue(
-      invalidEmail,
-    );
+    await expect(this.emailInput).toHaveValue(invalidEmail);
   }
 
   async expectRequiredFieldValidation(): Promise<void> {

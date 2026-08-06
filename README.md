@@ -7,17 +7,19 @@ The project validates the public booking flow using Playwright and TypeScript. I
 ## Project Structure
 
 ```
-.
-├── pages/                  # Page Objects
+├── pages/
+│   └── BookingPage.ts
 ├── tests/
-│   └── api/    
-│   └── ui/       
-├── TEST_CASES.md           # Manual test cases
-├── BUG_REPORT.md           # Bugs found during exploratory testing
+│   ├── api/
+│   │   └── create-booking.spec.ts
+│   └── ui/
+│       └── book/
+│           └── booking-validation.spec.ts
+├── utils/
+│   └── date-helper.ts
+├── TEST_CASES.md
+├── BUG_REPORTS.md
 ├── playwright.config.ts
-├── package.json
-├── tsconfig.json
-├── .env.example
 └── README.md
 ```
 
