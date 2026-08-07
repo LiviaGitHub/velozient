@@ -67,4 +67,71 @@ Although the validation works correctly, the error message is generic, technical
 
 Screenshot showing the generic validation message displayed after entering an invalid phone number.
 
----
+------------------------------------------------------
+
+# Bug Report - Invalid Booking Dates Result in Application Error Instead of Validation
+
+## Bug ID
+
+BUG-002
+
+## Title
+
+The system allows users to proceed with a booking when the check-in and check-out dates are the same, resulting in an application error page.
+
+## Severity
+
+High
+
+## Priority
+
+High
+
+## Environment
+
+- URL: https://automationintesting.online/
+- Browser: Chrome
+- OS: macOS
+
+## Preconditions
+
+- The application is accessible.
+- The user is on the booking page.
+
+## Steps to Reproduce
+
+1. Navigate to `https://automationintesting.online/`.
+2. Click **Book**.
+3. Enter the same future date for both **Check-in** and **Check-out**.
+4. Click **Check Availability**.
+5. Select an available room.
+6. Complete the reservation form with valid data.
+7. Click **Reserve Now**.
+
+## Actual Result
+
+The application allows the user to proceed through the booking flow with identical check-in and check-out dates.
+
+After submitting the reservation, the application displays an error page:
+
+> **This page couldn't load. Reload to try again, or go back.**
+
+## Expected Result
+
+The application should prevent the user from proceeding when the **Check-in** and **Check-out** dates are the same.
+
+A clear validation message should be displayed, for example:
+
+> **Check-out date must be later than the check-in date.**
+
+The user should remain on the booking page and no reservation should be submitted.
+
+## Impact
+
+The application accepts an invalid zero-night booking flow and only fails after submission, resulting in a broken user experience and indicating missing date validation.
+
+## Attachment
+
+Screenshot showing the application error page after submitting a booking with identical check-in and check-out dates.
+
+------------------------------------------------------------------------------------------------------------
