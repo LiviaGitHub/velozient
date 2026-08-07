@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { BookingPage } from '../../../pages/BookingPage';
+import { BookingFormPage } from '../../../pages/BookingFormPage';
+import { HomePage } from '../../../pages/HomePage';
+import { ReservationPage } from '../../../pages/ReservationPage';
 
 test.describe('Booking form validation', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,50 +11,55 @@ test.describe('Booking form validation', () => {
   test('TC-006 - User cannot submit the booking form with all fields empty', async ({
     page,
   }) => {
-    const bookingPage = new BookingPage(page);
+    const homePage = new HomePage(page);
+    const reservationPage = new ReservationPage(page);
+    const bookingFormPage = new BookingFormPage(page);
 
-    await bookingPage.clickBookingSection();
-    await bookingPage.clickCheckAvailability();
-    await bookingPage.selectFirstAvailableRoom();
+    await homePage.openBookingSection();
+    await homePage.checkAvailability();
+
+    await reservationPage.selectFirstAvailableRoom();
 
     await expect(page).toHaveURL(
       /\/reservation\/\d+\?checkin=.*&checkout=.*/,
     );
 
-    await bookingPage.openReservationForm();
-    await bookingPage.submitReservation();
+    await reservationPage.openReservationForm();
+    await bookingFormPage.submit();
 
-    await bookingPage.expectRequiredFieldValidation();
+    await bookingFormPage.expectRequiredFieldValidation();
   });
 
   test('TC-002 - User cannot complete a booking with an invalid email address', async ({
     page,
   }) => {
-    const bookingPage = new BookingPage(page);
+    const homePage = new HomePage(page);
+    const reservationPage = new ReservationPage(page);
+    const bookingFormPage = new BookingFormPage(page);
+
     const invalidEmail = 'invalid-email';
 
-    await bookingPage.clickBookingSection();
-    await bookingPage.clickCheckAvailability();
-    await bookingPage.selectFirstAvailableRoom();
+    await homePage.openBookingSection();
+    await homePage.checkAvailability();
+
+    await reservationPage.selectFirstAvailableRoom();
 
     await expect(page).toHaveURL(
       /\/reservation\/\d+\?checkin=.*&checkout=.*/,
     );
 
-    await bookingPage.openReservationForm();
+    await reservationPage.openReservationForm();
 
-    await bookingPage.completeBookingForm({
+    await bookingFormPage.fillForm({
       firstName: 'Livia',
       lastName: 'Bonifacio',
       email: invalidEmail,
       phone: '07123456789',
     });
 
-    await bookingPage.submitReservation();
+    await bookingFormPage.submit();
 
-    await bookingPage.expectInvalidEmailValidation(
-      invalidEmail,
-    );
+    await bookingFormPage.expectInvalidEmail(invalidEmail);
 
     await expect(page).toHaveURL(
       /\/reservation\/\d+\?checkin=.*&checkout=.*/,
