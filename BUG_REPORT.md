@@ -33,10 +33,10 @@ Low
 1. Navigate to `https://automationintesting.online/`.
 2. Select an available room.
 3. Fill in the reservation form with valid values:
-   - **First Name:** `qwe`
-   - **Last Name:** `qwe`
-   - **Email:** `qwe@dwf.com`
-4. Enter an invalid phone number (e.g., `wqeqw`).
+   - **First Name:** `Test`
+   - **Last Name:** `Test`
+   - **Email:** `test@gmail.com`
+4. Enter an invalid phone number (e.g., `test`).
 5. Click **Reserve Now**.
 
 ## Actual Result
