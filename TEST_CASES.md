@@ -221,7 +221,7 @@ Verify that the booking form rejects an invalid phone number.
 - A validation message indicating that the phone number is invalid must be displayed.
 - The user must remain on the booking form.
 
----
+------------------------------------------------------------------------
 
 # TC-008 – User Cannot Complete a Booking with an Invalid Email Address
 
@@ -252,3 +252,110 @@ Verify that the booking form rejects an invalid email address.
 - The booking must not be created.
 - The message **"must be a well-formed email address"** must be displayed.
 - The user must remain on the booking form.
+
+---------------------------------------------------------------------------------
+
+# TC-009 – User Can Search Again After Changing the Selected Dates
+
+## Objective
+
+Verify that the user can change the selected dates and perform a new availability search.
+
+## Preconditions
+
+- The application is available at https://automationintesting.online/.
+- The booking page is accessible.
+
+## Test Data
+
+### First Search
+
+- Check-in: Future date
+- Check-out: Following day
+
+### Second Search
+
+- Check-in: Different future date
+- Check-out: Following day
+
+## Steps
+
+1. Navigate to `https://automationintesting.online/`.
+2. Click **Book**.
+3. Enter the first set of dates.
+4. Click **Check Availability**.
+5. Change the check-in and check-out dates.
+6. Click **Check Availability** again.
+
+## Expected Result
+
+- The previous search results are refreshed.
+- The availability is updated according to the newly selected dates.
+- No outdated room information is displayed.
+
+------------------------------------------------------------------------------------
+
+# TC-010 – Booking Confirmation Displays the Correct Reservation Details
+
+## Objective
+
+Verify that the booking confirmation displays the correct reservation information after a successful booking.
+
+## Preconditions
+
+- The application is available at https://automationintesting.online/.
+- At least one room is available.
+
+## Test Data
+
+- Check-in: Future date
+- Check-out: Future date
+- First Name: Livia
+- Last Name: Bonifacio
+- Email: livia@example.com
+- Phone: 07123456789
+
+## Steps
+
+1. Navigate to `https://automationintesting.online/`.
+2. Complete a booking using valid data.
+3. Submit the reservation.
+
+## Expected Result
+
+- The booking is successfully created.
+- A confirmation page or message is displayed.
+- The reservation details (guest name and booking dates) match the submitted information.
+
+------------------------------------------------
+
+# TC-011 – User Cannot Create Duplicate Bookings by Double-clicking Reserve Now
+
+## Objective
+
+Verify that clicking **Reserve Now** multiple times does not create duplicate bookings.
+
+## Preconditions
+
+- The application is available at https://automationintesting.online/.
+- An available room has been selected.
+- The booking form is displayed.
+
+## Test Data
+
+- First Name: Livia
+- Last Name: Bonifacio
+- Email: livia@example.com
+- Phone: 07123456789
+
+## Steps
+
+1. Complete the booking form with valid data.
+2. Double-click the **Reserve Now** button.
+3. Wait for the booking process to finish.
+
+## Expected Result
+
+- Only one booking is created.
+- The reservation request is processed only once.
+- The application prevents duplicate submissions.
