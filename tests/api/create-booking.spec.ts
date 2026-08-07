@@ -1,3 +1,17 @@
+/*
+ * This test verifies that a booking can be successfully created through the Booking API.
+ *
+ * Since the public demo environment may already contain reservations for future dates,
+ * the test retries the request using different future date ranges until an available
+ * period is found (up to 10 attempts).
+ *
+ * The test validates:
+ * - HTTP 201 Created response
+ * - Booking ID is returned
+ * - Response data matches the submitted payload
+ * - Booking dates are correctly persisted
+ */
+
 import { expect, test } from '@playwright/test';
 
 interface BookingDates {
